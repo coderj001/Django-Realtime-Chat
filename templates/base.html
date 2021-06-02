@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>
+      ChatApp
+      {% block TITLE %}{% endblock TITLE %}
+    </title>
+  </head>
+  <link
+    rel="{% static 'css/base_html.css' %}"
+    href="/css/master.css"
+    type="text/css"
+    media="screen"
+    title="no title"
+    charset="utf-8">
+  <body>
+    {% include "./snippets/header.html" %}
+
+    {% block content %}{% endblock content %}
+
+    {% include "./snippets/footer.html" %}
+  </body>
+  <script src="{% static 'js/base_html.js' %}" charset="utf-8"></script>
+</html>

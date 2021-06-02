@@ -18,7 +18,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'core.apps.CoreConfig'
+    'core.apps.CoreConfig',
+    'account.apps.AccountConfig'
+
 ]
 
 MIDDLEWARE = [
@@ -52,7 +54,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ChatServerPlayground.wsgi.application'
 
 
-if bool(strtobool(os.environ.get('postgres'))):
+if os.environ.get('postgres'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -111,6 +113,12 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+STATICFILES_DIRS = (
+    BASE_DIR / "static",
+    BASE_DIR / "media"
+)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (BASE_DIR / "static",)
+MEDIA_URL = '/media/'
 STATIC_ROOT = "static_root"
+MEDIA_ROOT = "media_root"
+TEMP = "media_tmp"

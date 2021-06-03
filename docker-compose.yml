@@ -6,7 +6,7 @@ services:
     image: coderj001/django_chatapp
     container_name: django_chatapp
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py makemigrations && python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app

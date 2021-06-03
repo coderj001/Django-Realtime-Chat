@@ -8,6 +8,7 @@ django = "*"
 redis = "*"
 psycopg2-binary = "*"
 django-redis = "*"
+pillow = "*"
 
 [dev-packages]
 pylint = "*"

@@ -60,7 +60,7 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                  src="{% static 'img/default_profile_image.png' %}"
+                  src="{{ request.user.profile_image.url }}"
                   alt="codingwithmitch logo"
                   width="40"
                   height="40">

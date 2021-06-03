@@ -122,3 +122,9 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = "static_root"
 MEDIA_ROOT = "media_root"
 TEMP = "media_tmp"
+
+AUTH_USER_MODEL = "account.Account"
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
+    'account.backends.CaseInsensitiveModelBackend'
+)

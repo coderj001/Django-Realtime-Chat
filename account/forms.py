@@ -35,3 +35,18 @@ class RegistrationForm(UserCreationForm):
             return username
         raise forms.ValidationError(
             'Username "%s" is already in use.' % username)
+
+
+class AccountAuthForm(forms.Form):
+    password = forms.CharField(label="password", widget=forms.PasswordInput)
+
+    class Meta:
+        model = Account
+        fields = ("email", "password")
+
+    def clean_email(self):
+        if self.is_valid():
+            email = self.cleaned_data.get('email')
+            password = self.cleaned_data.get('password')
+            if not authenticate(email=email, password=password):
+                raise forms.ValidationError('Invalid Login')

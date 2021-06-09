@@ -53,30 +53,35 @@
                 </div>
               </div>
 
-              <div class="btn-group dropleft">
+              <div class="dropdown btn-group dropleft">
                 <img
                   class="account-image rounded-circle m-auto d-block dropdown-toggle"
-                  id="id_profile_links"
+                  id="idprofilelinks"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
                   src="{{ request.user.profile_image.url }}"
                   alt="codingwithmitch logo"
                   width="40"
-                  height="40">
-                <div class="dropdown-menu" aria-labelledby="id_profile_links">
-                  <a class="dropdown-item" href="#">
-                    Account</a>
-                  <a class="dropdown-item" href="#" >
-                    Logout</a>
-                </div>
+                  height="40"
+                  data-bs-toggle="dropdown">
+                <ul class="dropdown-menu" aria-labelledby="idprofilelinks">
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      Account</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="{% url 'account:logout_view' %}">
+                      Logout</a>
+                  </li>
+                </ul>
               </div>
             </div>
 
           </div>
 
         {% else %}
-          <a class="p-2 text-dark" href="#">
+          <a class="p-2 text-dark" href="{% url 'account:login_view' %}">
             Login</a>
           <a class="btn btn-outline-primary" href="{% url 'account:register_view' %}">
             Register</a>

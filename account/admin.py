@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 
 from account.models import Account
 
@@ -20,3 +21,7 @@ class AccountAdmin(admin.ModelAdmin):
     filter_horizontal = ()
     list_filter = ()
     fieldsets = ()
+    add_fieldsets = ()
+
+
+admin.site.unregister(Group)

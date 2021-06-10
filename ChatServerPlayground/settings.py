@@ -53,7 +53,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ChatServerPlayground.wsgi.application'
 
-
 if os.environ.get('postgres'):
     DATABASES = {
         'default': {
@@ -98,7 +97,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -128,3 +126,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
     'account.backends.CaseInsensitiveModelBackend'
 )
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # for dev

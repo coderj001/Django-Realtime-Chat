@@ -129,3 +129,5 @@ AUTHENTICATION_BACKENDS = (
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # for dev
+
+BASE_URL = 'http://localhost:8000/'

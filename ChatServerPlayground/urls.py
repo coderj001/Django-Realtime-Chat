@@ -6,8 +6,8 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('core.urls')),
-    path('account/', include('account.urls')),
+    path('', include('core.urls', namespace='core')),
+    path('account/', include('account.urls', namespace='account')),
 
 
     # TODO:  <10-06-21, coderj001> # Password reset through templates not done

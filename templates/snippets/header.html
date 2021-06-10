@@ -66,10 +66,12 @@
                   height="40"
                   data-bs-toggle="dropdown">
                 <ul class="dropdown-menu" aria-labelledby="idprofilelinks">
-                  <li>
-                    <a class="dropdown-item" href="#">
-                      Account</a>
-                  </li>
+                  {% if request.user.is_authenticated %}
+                    <li>
+                      <a class="dropdown-item" href="{{ request.user.get_absolute_url }}">
+                        Account</a>
+                    </li>
+                  {% endif %}
                   <li>
                     <a class="dropdown-item" href="{% url 'account:logout_view' %}">
                       Logout</a>

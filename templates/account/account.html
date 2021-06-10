@@ -191,28 +191,41 @@
                     Unfriend</a>
                 </div>
               </div>
-            {% endif }
+            {% endif %}
 
-				<!-- TODO -->
-				<!-- Friend list link -->
+            <!-- TODO -->
+            <!-- Friend list link -->
+            <div class="d-flex flex-column pt-4">
+              <a href="#">
+                <div class="d-flex flex-row align-items-center justify-content-center icon-container">
+                  <span class="material-icons mr-2 friends-icon">
+                    contact_page</span>
+                  <span class="friend-text">
+                    Friends (0)</span>
+                </div>
+              </a>
+            </div>
 
-			</div>
+          </div>
 
-			<!-- TODO -->
-			{#% if friend_requests %#}
-			<div class="card m-2 px-4 pb-4">
-				<!-- Friend requests -->
-		  		<div class="d-flex flex-column pt-4">
-					<a href="#">
-						<div class="d-flex flex-row align-items-center justify-content-center icon-container">
-							<span class="material-icons mr-2 person-add-icon">person_add</span><span class="friend-text">Friend Requests (0)</span>
-						</div>
-					</a>
-				</div>
-			</div>
-			{#% endif %#}
+          <!-- TODO -->
+          {#% if friend_requests %#}
+          <div class="card m-2 px-4 pb-4">
+            <!-- Friend requests -->
+            <div class="d-flex flex-column pt-4">
+              <a href="#">
+                <div class="d-flex flex-row align-items-center justify-content-center icon-container">
+                  <span class="material-icons mr-2 person-add-icon">
+                    person_add</span>
+                  <span class="friend-text">
+                    Friend Requests (0)</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          {#% endif %#}
 
-			{% if is_friend %}
+          {% if is_friend %}
             <div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" onclick="createOrReturnPrivateChat('{{id}}')">
               <span class="material-icons m-auto">
                 message
@@ -224,77 +237,73 @@
 
         </div>
       {% endif %}
-    {% endif %}
 
 
+    </div>
   </div>
-</div>
 
 
-<script type="text/javascript">
-  // called from base_js.html preloadImage("{{profile_image|safe}}", 'id_profile_image')
+  <script type="text/javascript">
+    // called from base_js.html preloadImage("{{profile_image|safe}}", 'id_profile_image')
 
-  function onFriendRequestSent() {
-    location.reload();
-  }
+    function onFriendRequestSent() {
+      location.reload();
+    }
 
-  function onFriendRequestCancelled() {
-    location.reload();
-  }
+    function onFriendRequestCancelled() {
+      location.reload();
+    }
 
-  function onFriendRemoved() {
-    location.reload();
-  }
+    function onFriendRemoved() {
+      location.reload();
+    }
 
-  function onFriendRequestAccepted() {
-    location.reload();
-  }
+    function onFriendRequestAccepted() {
+      location.reload();
+    }
 
-  function onFriendRequestDeclined() {
-    location.reload();
-  }
+    function onFriendRequestDeclined() {
+      location.reload();
+    }
 
 
-  var sendFriendRequestBtn = document.getElementById("id_send_friend_request_btn")
-  if (sendFriendRequestBtn != null) {
-    sendFriendRequestBtn.addEventListener("click", function () {
-      //sendFriendRequest("{{id}}", onFriendRequestSent)
-    })
-  }
+    var sendFriendRequestBtn = document.getElementById("id_send_friend_request_btn")
+    if (sendFriendRequestBtn != null) {
+      sendFriendRequestBtn.addEventListener("click", function () {
+        //sendFriendRequest("{{id}}", onFriendRequestSent)
+      })
+    }
 
-  var cancelFriendRequestBtn = document.getElementById("id_cancel_friend_request_btn")
-  if (cancelFriendRequestBtn != null) {
-    cancelFriendRequestBtn.addEventListener("click", function () {
-      //cancelFriendRequest("{{id}}", onFriendRequestCancelled)
-    })
-  }
+    var cancelFriendRequestBtn = document.getElementById("id_cancel_friend_request_btn")
+    if (cancelFriendRequestBtn != null) {
+      cancelFriendRequestBtn.addEventListener("click", function () {
+        //cancelFriendRequest("{{id}}", onFriendRequestCancelled)
+      })
+    }
 
-  var removeFriendBtn = document.getElementById("id_unfriend_btn")
-  if (removeFriendBtn != null) {
-    removeFriendBtn.addEventListener("click", function () {
-      //removeFriend("{{id}}", onFriendRemoved)
-    })
-  }
+    var removeFriendBtn = document.getElementById("id_unfriend_btn")
+    if (removeFriendBtn != null) {
+      removeFriendBtn.addEventListener("click", function () {
+        //removeFriend("{{id}}", onFriendRemoved)
+      })
+    }
 
-  function triggerAcceptFriendRequest(friend_request_id) {
-    //acceptFriendRequest(friend_request_id, onFriendRequestAccepted)
-  }
+    function triggerAcceptFriendRequest(friend_request_id) {
+      //acceptFriendRequest(friend_request_id, onFriendRequestAccepted)
+    }
 
-  function triggerDeclineFriendRequest(friend_request_id) {
-    //declineFriendRequest(friend_request_id, onFriendRequestDeclined)
-  }
-</script>
+    function triggerDeclineFriendRequest(friend_request_id) {
+      //declineFriendRequest(friend_request_id, onFriendRequestDeclined)
+    }
+  </script>
 
-{#% include 'snippets/send_friend_request.html' %#}
-{#% include 'snippets/accept_friend_request.html' %#}
-{#% include 'snippets/decline_friend_request.html' %#}
-{#% include 'snippets/cancel_friend_request.html' %#}
-{#% include 'snippets/remove_friend.html' %#}
-{#% include 'chat/create_or_return_private_chat.html' %#}
+  {#% include 'snippets/send_friend_request.html' %#}
+  {#% include 'snippets/accept_friend_request.html' %#}
+  {#% include 'snippets/decline_friend_request.html' %#}
+  {#% include 'snippets/cancel_friend_request.html' %#}
+  {#% include 'snippets/remove_friend.html' %#}
+  {#% include 'chat/create_or_return_private_chat.html' %#}
 
 
 
 {% endblock content %}
-
-
-%

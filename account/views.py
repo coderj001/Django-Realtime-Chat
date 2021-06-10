@@ -1,9 +1,10 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.conf import settings
 
-from account.forms import RegistrationForm, AccountAuthForm
+from account.forms import AccountAuthForm, RegistrationForm
 from account.models import Account
 
 
@@ -108,3 +109,21 @@ def account_view(request, *args, **kwargs):
         context['BASE_URL'] = settings.BASE_URL
 
     return render(request, 'account/account.html', context=context)
+
+
+def account_search_view(request, *args, **kwargs):
+    context = {}
+
+    if request.method == 'GET':
+        search_query = request.GET.get("q")
+        print(search_query)
+        if len(search_query) > 0:
+            search_result = Account.objects.filter(Q(email__icontains=search_query) | Q(
+                username__icontains=search_query)).distinct()
+            accounts = list()
+            if search_result:
+                accounts = [(q, False) for q in search_result]
+
+            context['accounts'] = accounts
+
+    return render(request, "account/search_result.html", context=context)

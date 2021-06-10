@@ -12,7 +12,12 @@
         Home</a>
     </h3>
 
-    <form action="." method="get" accept-charset="utf-8" class="search-bar justify-content-start">
+    <form
+      action="{% url 'account:account_search_view' %}"
+      method="get"
+      accept-charset="utf-8"
+      class="search-bar justify-content-start"
+      onsubmit="return executeQuery()">
       <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
     </form>
 
@@ -92,3 +97,20 @@
     </div>
   </div>
 </div>
+
+<script charset="utf-8">
+  function executeQuery() {
+    var query = document
+      .getElementById('id_q_small')
+      .value
+    if (query == "") {
+      query = document
+        .getElementById('id_q_large')
+        .value
+    }
+    window
+      .location
+      .replace("{% url 'account:account_search_view' %}?q=" + query)
+  return false
+  }
+</script>

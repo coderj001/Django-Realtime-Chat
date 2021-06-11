@@ -1,11 +1,18 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.cache import cache_page
 
 from account.forms import AccountAuthForm, RegistrationForm
 from account.models import Account
+
+logger = logging.getLogger(__name__)
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
 def get_redirect_if_exists(request):
@@ -14,12 +21,14 @@ def get_redirect_if_exists(request):
         next = request.GET.get('next')
         if next:
             redirect = str(next)
+    logger.info('Rederict after login or registration.')
     return redirect
 
 
 def register_view(request, *args, **kwargs):
     user = request.user
     if user.is_authenticated:
+        logger.warn(f"Auth User {user.email} trying to view register page.")
         return HttpResponse(
             f"You are already authenticated as {user.email}."
         )
@@ -62,6 +71,7 @@ def login_view(request, *args, **kwargs):
 
     if request.method == 'POST':
         form = AccountAuthForm(request.POST or None)
+
         if form.is_valid():
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -73,7 +83,9 @@ def login_view(request, *args, **kwargs):
                     return redirect(destination)
                 else:
                     return redirect("core:home_view")
-        context['login_form'] = form
+        else:
+            context['login_form'] = form
+
     else:
         form = AccountAuthForm()
         context['login_form'] = form
@@ -81,6 +93,7 @@ def login_view(request, *args, **kwargs):
     return render(request, 'account/login.html', context=context)
 
 
+@cache_page(CACHE_TTL)
 def account_view(request, *args, **kwargs):
     context = {}
     user_id = kwargs.get('id')
@@ -116,7 +129,6 @@ def account_search_view(request, *args, **kwargs):
 
     if request.method == 'GET':
         search_query = request.GET.get("q")
-        print(search_query)
         if len(search_query) > 0:
             search_result = Account.objects.filter(Q(email__icontains=search_query) | Q(
                 username__icontains=search_query)).distinct()

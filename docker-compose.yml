@@ -6,24 +6,23 @@ services:
     image: coderj001/django_chatapp
     container_name: django_chatapp
     command: >
-      sh -c "python manage.py makemigrations && python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     environment:
       - debug=True
-      - secret_key='django-insecure-101vq(k5xlxjq!c%1fsor0r+%8op4+t_h(62_e5992#)#e%ot'
+      - secret_key=django-insecure-101vq(k5xlxjq!c%1fsor0r+%8op4+t_h(62_e5992#)#e%ot
       - postgres=True
       - DB_HOST=pgdb
       - DB_NAME=postgres
       - DB_USER=postgres
       - DB_PASS=postgres
       - DB_PORT=5432
-      - REDIS_URL='redis://cache:6379/0'
+      - REDIS_URL=redis://cache:6379/0
     links:
-      - redis
+      - cache
     depends_on:
       - pgdb
   pgdb:
@@ -34,11 +33,9 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
     volumes:
       - ./pgdata:/var/lib/postgresql/data/
-  redis:
+  cache:
     image: redis:alpine
     container_name: cache
     restart: always

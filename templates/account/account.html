@@ -119,7 +119,7 @@
 
             <!-- If Auth user is viewing their own profile -->
             {% if is_self %}
-              <a class="mt-4 btn btn-primary" href="#">
+              <a class="mt-4 btn btn-primary" href="{% url 'account:edit_account_view' id=request.user.id %}">
                 Update</a>
               <div class="d-flex flex-column mt-4">
                 <a class="m-auto" href="{% url 'password_change' %}">

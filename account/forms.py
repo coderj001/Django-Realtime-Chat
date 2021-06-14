@@ -18,7 +18,7 @@ class RegistrationForm(UserCreationForm):
         )
 
     def clean_email(self):
-        email = self.cleaned_data.get('email').lower()
+        email = self.cleaned_data['email'].lower()
         try:
             account = Account.objects.exclude(
                 pk=self.instance.pk).get(email=email)
@@ -79,10 +79,10 @@ class AccountUpdateForm(forms.ModelForm):
 
     def save(self, commit=True):
         account = super(AccountUpdateForm, self).save(commit=False)
-        account.email = self.changed_data.get('email')
-        account.username = self.changed_data.get('username')
-        account.profile_image = self.changed_data.get('profile_image')
-        account.hide_email = self.changed_data.get('hide_email')
+        account.email = self.cleaned_data.get('email')
+        account.username = self.cleaned_data.get('username')
+        account.profile_image = self.cleaned_data.get('profile_image')
+        account.hide_email = self.cleaned_data.get('hide_email')
         if commit:
             account.save()
         return account

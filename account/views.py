@@ -2,6 +2,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.core.cache import cache
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.db.models import Q
 from django.http import HttpResponse
@@ -162,13 +163,21 @@ def edit_account_view(request, *args, **kwargs):
             instance=request.user
         )
         if form.is_valid():
+            account.profile_image.delete()
             form.save()
+            cache.clear()
+            # cache.delete(reverse(
+            #     'account:account_view',
+            #     kwargs={
+            #         'id': account.id
+            #     }
+            # ))
+            logger.info(f"Updated user {account.username}")
             return redirect('account:account_view', id=account.id)
         else:
             form = AccountUpdateForm(
                 request.POST,
                 instance=request.user,
-                # ERROR:  <14-06-21, coderj001> # initial error on templates
                 initial={
                     "id": account.id,
                     "email": account.email,
@@ -177,7 +186,16 @@ def edit_account_view(request, *args, **kwargs):
                     "hide_email": account.hide_email
                 }
             )
-
+            context['form'] = form
+    else:
+        form = AccountUpdateForm(initial={
+            "id": account.id,
+            "email": account.email,
+            "username": account.username,
+            "profile_image": account.profile_image,
+            "hide_email": account.hide_email
+        })
         context['form'] = form
+
     context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
     return render(request, "account/edit_account.html", context=context)

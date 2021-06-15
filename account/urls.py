@@ -6,7 +6,8 @@ from account.views import (
     edit_account_view,
     login_view,
     logout_view,
-    register_view
+    register_view,
+    crop_image
 )
 
 app_name = 'account'
@@ -18,4 +19,5 @@ urlpatterns = [
     path('profile/search/', account_search_view, name="account_search_view"),
     path('profile/<int:id>/', account_view, name="account_view"),
     path('profile/<int:id>/edit/', edit_account_view, name="edit_account_view"),
+    path('profile/<int:id>/crop/', crop_image, name="crop_image"),
 ]

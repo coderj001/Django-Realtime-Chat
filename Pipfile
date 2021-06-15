@@ -9,12 +9,11 @@ redis = "*"
 psycopg2-binary = "*"
 django-redis = "*"
 pillow = "*"
+requests = "*"
 
 [dev-packages]
 pylint = "*"
 django-linter = "*"
-ipdb = "*"
-ipython = "*"
 isort = "*"
 rope = "*"
 autopep8 = "*"

@@ -1,18 +1,27 @@
+import base64
+import json
 import logging
+import os
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.core import files
 from django.core.cache import cache
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.core.files.storage import FileSystemStorage, default_storage
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, reverse
-from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_exempt
+from PIL import Image
 
 from account.forms import AccountAuthForm, AccountUpdateForm, RegistrationForm
 from account.models import Account
 
 logger = logging.getLogger(__name__)
+
+TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
+
 CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
@@ -94,12 +103,38 @@ def login_view(request, *args, **kwargs):
     return render(request, 'account/login.html', context=context)
 
 
-@cache_page(CACHE_TTL)
 def account_view(request, *args, **kwargs):
     context = {}
     user_id = kwargs.get('id')
     try:
-        account = Account.objects.get(id=user_id)
+        if not cache.has_key(
+            reverse(
+                'account:account_view',
+                kwargs={
+                    'id': user_id
+                }
+            )
+        ):
+            account = Account.objects.get(id=user_id)
+            cache.set(
+                reverse(
+                    'account:account_view',
+                    kwargs={
+                        'id': user_id
+                    }
+                ),
+                account,
+                CACHE_TTL
+            )
+        else:
+            account = cache.get(
+                reverse(
+                    'account:account_view',
+                    kwargs={
+                        'id': user_id
+                    }
+                )
+            )
     except Account.DoesNotExist:
         return HttpResponse("That user dosn't exist.")
 
@@ -163,15 +198,14 @@ def edit_account_view(request, *args, **kwargs):
             instance=request.user
         )
         if form.is_valid():
-            account.profile_image.delete()
             form.save()
-            cache.clear()
-            # cache.delete(reverse(
-            #     'account:account_view',
-            #     kwargs={
-            #         'id': account.id
-            #     }
-            # ))
+            cache.delete(reverse(
+                'account:account_view',
+                kwargs={
+                    'id': user_id
+                }
+            )
+            )
             logger.info(f"Updated user {account.username}")
             return redirect('account:account_view', id=account.id)
         else:
@@ -199,3 +233,64 @@ def edit_account_view(request, *args, **kwargs):
 
     context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
     return render(request, "account/edit_account.html", context=context)
+
+
+def save_temp_profile_image_from_base64String(imageString, user):
+    INCORRECT_PADDING_EXCEPTION = "Incorrect Padding"
+    try:
+        if not os.path.exists(settings.TEMP):
+            os.mkdir(settings.TEMP)
+        if not os.path.exists(f"{settings.TEMP}/{str(user.id)}"):
+            os.mkdir(f"{settings.TEMP}/{str(user.id)}")
+        url = os.path.join(
+            f"{settings.TEMP}/{str(user.id)}",
+            TEMP_PROFILE_IMAGE_NAME
+        )
+        storage = FileSystemStorage(location=url)
+        image = base64.b64decode(imageString)
+        with storage.open('', 'wb+') as des:
+            des.write(image)
+        return url
+    except Exception as e:
+        if str(e) == INCORRECT_PADDING_EXCEPTION:
+            imageString += "="*((4-len(imageString) % 4) % 4)
+            return save_temp_profile_image_from_base64String(imageString, user)
+    return None
+
+
+@csrf_exempt
+def crop_image(request, *args, **kwargs):
+    payload = {}
+    user = request.user
+    if request.method == 'POST' and user.is_authenticated:
+        try:
+            imageString = request.POST.get('image')
+            url = save_temp_profile_image_from_base64String(imageString, user)
+            img = Image.open(url)
+            cropX = int(float(str(request.POST.get("cropX"))))
+            cropY = int(float(str(request.POST.get("cropY"))))
+            cropWidth = int(float(str(request.POST.get("cropWidth"))))
+            cropHeigth = int(float(str(request.POST.get("cropHeigth"))))
+
+            if cropX < 0:
+                cropX = 0
+            if cropY < 0:
+                cropY = 0
+
+            left = cropX
+            top = cropY+cropHeigth
+            right = cropX+cropWidth
+            bottom = cropY
+
+            crop_img = img.crop((left, top, right, bottom))
+            user.profile_image.delete()
+            user.profile_image.save(files.File(open(url, "rb")))
+
+            payload['result'] = "success"
+            payload['cropped_profile_image'] = user.profile_image.url
+            os.remove(url)
+        except Exception as e:
+            payload['result'] = "Error"
+            payload['exception'] = str(e)
+            logger.debug(str(e))
+    return HttpResponse(json.dumps(payload), content_type="application/json")

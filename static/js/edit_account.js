@@ -8,20 +8,6 @@ var cropHeight;
 
 enableImageOverlay();
 
-function readURL(input) {
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-
-    reader.onload = function (e) {
-      disableImageOverlay();
-      var image = e.target.result;
-      var imageField = document.getElementById("id_profile_image_display");
-      imageField.src = image;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
 function enableImageOverlay() {
   var text = document.getElementById("id_text");
   text.style.backgroundColor = "#0066ff";
@@ -122,3 +108,100 @@ function disableImageOverlay() {
     window.location.reload();
   });
 }
+
+/* return null if invalid or base64String if valid */
+function isImageSizeValid(image) {
+  console.log("max size: {{DATA_UPLOAD_MAX_MEMORY_SIZE}}");
+  // console.log(image)
+  var startIndex = image.indexOf("base64,") + 7;
+  var base64str = image.substr(startIndex);
+  var decoded = atob(base64str);
+  console.log("FileSize: " + decoded.length);
+  if (decoded.length >= "{{DATA_UPLOAD_MAX_MEMORY_SIZE}}") {
+    return null;
+  }
+  return base64str;
+}
+
+function cropImage(image, x, y, width, height) {
+  base64ImageString = isImageSizeVaid(image);
+
+  if (base64ImageString != null) {
+    var requestData = {
+      csrfmiddlewaretoken: "{{ csrf_token }}",
+      image: base64ImageString,
+      cropX: cropX,
+      cropY: cropY,
+      cropWidth: cropWidth,
+      cropHeight: cropHeight,
+    };
+    displayLoadingSpinner(true);
+    $.ajax({
+      type: "POST",
+      dataType: "json",
+      url: "{% url 'account:crop_image' user_id=form.initial.id %}",
+      data: requestData,
+      timeout: 10000,
+      success: function (data) {
+        if (data.result == "success") {
+          document.getElementById("id_cancel").click();
+        } else if (data.result == "error") {
+          alert(data.exception);
+          document.getElementById("id_cancel").click();
+        }
+      },
+      error: function (data) {
+        console.error("ERROR...", data);
+      },
+      complete: function (data) {
+        displayLoadingSpinner(false);
+      },
+    });
+  } else {
+    alert("Upload an image smaller than 10 MB");
+    document.getElementById("id_cancel").click();
+  }
+}
+
+/*
+		Called when a new image is selected from file chooser dialog
+	*/
+function readURL(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      disableImageOverlay();
+      var image = e.target.result;
+      var imageField = document.getElementById("id_profile_image_display");
+      imageField.src = image;
+      cropper = new Cropper(imageField, {
+        aspectRatio: 1 / 1,
+        crop(event) {
+          // console.log("CROP START")
+          // console.log("x: " + event.detail.x);
+          // console.log("y: " + event.detail.y);
+          // console.log("width: " + event.detail.width);
+          // console.log("height: " + event.detail.height);
+          setImageCropProperties(
+            image,
+            event.detail.x,
+            event.detail.y,
+            event.detail.width,
+            event.detail.height
+          );
+        },
+      });
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function setImageCropProperties(image, x, y, width, height) {
+  imageFile = image;
+  cropX = x;
+  cropY = y;
+  cropWidth = width;
+  cropHeight = height;
+}
+l;

@@ -25,9 +25,26 @@
 
   {% block css_content %}{% endblock css_content %}
 
+  <style type="text/css">
+    .main {
+      min-height: 100vh;
+      height: 100%;
+    }
+  </style>
+
   <body>
+    <div class="container" id="id_loading_spinner" style="display: none">
+      <div class="d-flex flex-row mx-auto flex-grow-1 justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">
+            Loading...</span>
+        </div>
+      </div>
+    </div>
     {% include "./snippets/header.html" %}
-    {% block content %}{% endblock content %}
+    <div class="main">
+      {% block content %}{% endblock content %}
+    </div>
 
     {# {% include "./snippets/footer.html" %} #}
   </body>

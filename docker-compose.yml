@@ -11,16 +11,8 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - debug=True
-      - secret_key=django-insecure-101vq(k5xlxjq!c%1fsor0r+%8op4+t_h(62_e5992#)#e%ot
-      - postgres=True
-      - DB_HOST=pgdb
-      - DB_NAME=postgres
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - DB_PORT=5432
-      - REDIS_URL=redis://cache:6379/0
+    env_file:
+      - ./web-env
     links:
       - cache
     depends_on:
@@ -29,10 +21,8 @@ services:
     image: postgres
     container_name: pgdb
     restart: always
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    env_file:
+      - ./pgdb-env
     volumes:
       - ./pgdata:/var/lib/postgresql/data/
   cache:

@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'core.apps.CoreConfig',
-    'account.apps.AccountConfig'
+    'account.apps.AccountConfig',
+    'friend.apps.FriendConfig',
 
 ]
 

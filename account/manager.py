@@ -12,13 +12,17 @@ class AccountManager(BaseUserManager):
         if not username:
             raise ValueError('The given username must be set')
 
-        user = self.model(email=email, username=username, **extra_fields)
+        user = self.model(
+            email=email,
+            username=username,
+            **extra_fields
+        )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_user(self, email, username, password, **extra_fields):
-        extra_fields.setdefault('is_stuff', True)
+        extra_fields.setdefault('is_staff', True)
         return self._create_user(
             email,
             username,
@@ -27,7 +31,7 @@ class AccountManager(BaseUserManager):
         )
 
     def create_superuser(self, email, username, password, **extra_fields):
-        extra_fields.setdefault('is_stuff', True)
+        extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_superuser', True)
 

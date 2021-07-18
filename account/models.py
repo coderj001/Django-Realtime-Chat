@@ -7,8 +7,15 @@ from account.manager import AccountManager
 
 
 class Account(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True, verbose_name='Email', max_length=60)
-    username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(
+        unique=True,
+        verbose_name='Email',
+        max_length=60
+    )
+    username = models.CharField(
+        max_length=50,
+        unique=True
+    )
     date_joined = models.DateTimeField(
         verbose_name='Date Jointed',
         auto_now_add=True
@@ -48,7 +55,5 @@ class Account(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         return reverse(
             "account:account_view",
-            kwargs={
-                'id': self.id,
-            }
+            kwargs={'id': self.id, }
         )

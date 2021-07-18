@@ -9,7 +9,7 @@ SECRET_KEY = os.environ.get('secret_key')
 
 DEBUG = bool(strtobool(os.environ.get('debug')))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
